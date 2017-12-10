@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import thomasian.cosc431.towson.edu.weatherapp.IPresenter;
+import thomasian.cosc431.towson.edu.weatherapp.IController;
 import thomasian.cosc431.towson.edu.weatherapp.R;
 import thomasian.cosc431.towson.edu.weatherapp.models.Weather;
 /**
@@ -16,8 +16,8 @@ public class WeatherViewHolder extends RecyclerView.ViewHolder {
     TextView locationTv;
     TextView weathericonTv;
     TextView weathertempTv;
-    IPresenter controller;
-    public WeatherViewHolder(View itemView, final IPresenter controller){
+    IController controller;
+    public WeatherViewHolder(View itemView, final IController controller){
         super(itemView);
         this.controller = controller;
         locationTv = (TextView)itemView.findViewById(R.id.city_field);
@@ -33,6 +33,8 @@ public class WeatherViewHolder extends RecyclerView.ViewHolder {
         weathertempTv.setText(weather.getTemp());
 
         this.weather = weather;
+
+
     }
 
 

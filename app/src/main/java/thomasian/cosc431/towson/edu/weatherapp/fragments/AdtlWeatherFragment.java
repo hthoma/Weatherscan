@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -46,8 +45,6 @@ public class AdtlWeatherFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.adtl_weather_frag, container, false);
         cityField = (TextView) rootView.findViewById(R.id.city_field);
-        updatedField = (TextView) rootView.findViewById(R.id.updated_field);
-        detailsField = (TextView) rootView.findViewById(R.id.details_field);
         currentTemperatureField = (TextView) rootView.findViewById(R.id.current_temperature_field);
         weatherIcon = (TextView) rootView.findViewById(R.id.weather_icon);
         weatherIcon.setTypeface(weatherFont);
@@ -95,25 +92,14 @@ public class AdtlWeatherFragment extends Fragment {
             JSONObject main = json.getJSONObject("main");
             JSONObject wind = json.getJSONObject("wind");
             if (metric){
-                detailsField.setText(
-                        details.getString("description").toUpperCase(Locale.US) +
-                                "\n" + "Humidity: " + main.getString("humidity") + "%" +
-                                "\n" + "Wind Speed: " + wind.getString("speed") +" " + "m/s");
                 currentTemperatureField.setText(
                         String.format("%.2f", main.getDouble("temp"))+ " °C");
             }
             else{
-                detailsField.setText(
-                        details.getString("description").toUpperCase(Locale.US) +
-                                "\n" + "Humidity: " + main.getString("humidity") + "%" +
-                                "\n" + "Wind Speed: " + wind.getString("speed") +" " + "mi/h");
                 currentTemperatureField.setText(
                         String.format("%.2f", main.getDouble("temp"))+ " °F");
             }
 
-            DateFormat df = DateFormat.getDateTimeInstance();
-            String updatedOn = df.format(new Date(json.getLong("dt")*1000));
-            updatedField.setText("Last update: " + updatedOn);
 
             setWeatherIcon(details.getInt("id"),
                     json.getJSONObject("sys").getLong("sunrise") * 1000,

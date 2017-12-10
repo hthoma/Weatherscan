@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,13 +23,17 @@ import thomasian.cosc431.towson.edu.weatherapp.fragments.WeatherFragment;
 import thomasian.cosc431.towson.edu.weatherapp.models.Weather;
 import thomasian.cosc431.towson.edu.weatherapp.prefrences.CityPref;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, IController {
+    private static final int ADD_SONG_REQUEST_CODE = 42;
+    private static final String TAG = MainActivity.class.getSimpleName();
+
+
 
     ImageButton textButton, textButton2, textButton3,textButton4;
-    IPresenter presenter;
+
     RecyclerView recyclerView;
     public WeatherAdapter adapter;
-    ArrayList<Weather> weathers;
+    ArrayList<Weather> weathers= new ArrayList<Weather>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,14 +45,13 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
 
-
+        weathers.add(new Weather("Baltimore"));
         recyclerView = (RecyclerView)findViewById(R.id.weatherlist);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new WeatherAdapter(weathers,presenter));
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.weatherlist, new WeatherFragment())
-                .commit();
+        adapter = new WeatherAdapter(weathers, (IController)this);
+        recyclerView.setAdapter(adapter);
+
+
 
 
 
@@ -152,7 +156,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onClick(View view) {
 
+    }
 
+    @Override
+    public void deleteWeather(Weather weather) {
 
+    }
+
+    @Override
+    public void launchAddWeather() {
+
+    }
+
+    @Override
+    public void handleNewWeatherResult(Intent data) {
+
+    }
+
+    @Override
+    public void logWeather() {
+        for(Weather weather : weathers) {
+            Log.d("TAG", weather.toString());
+        }
+    }
 }
