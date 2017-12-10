@@ -1,12 +1,8 @@
 package thomasian.cosc431.towson.edu.weatherapp.models;
 
-import android.util.Log;
-
 import org.json.JSONObject;
 
-import java.text.DateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import thomasian.cosc431.towson.edu.weatherapp.R;
 import thomasian.cosc431.towson.edu.weatherapp.fragments.WeatherFragment;
@@ -17,7 +13,7 @@ import thomasian.cosc431.towson.edu.weatherapp.fragments.WeatherFragment;
 
 public class Weather {
     String cityname = "Baltimore";
-    String weathericon = "B";
+    String weathericon = "&#xf014;";
     String temp = "60";
     boolean metric = false;
     WeatherFragment wf = new WeatherFragment();
@@ -45,33 +41,6 @@ public class Weather {
 
     public void updateweatherinfo(JSONObject json){
 
-            try {
-                setCityname(json.getString("name").toUpperCase(Locale.US) +
-                        ", " +
-                        json.getJSONObject("sys").getString("country"));
-
-                JSONObject details = json.getJSONArray("weather").getJSONObject(0);
-                JSONObject main = json.getJSONObject("main");
-                JSONObject wind = json.getJSONObject("wind");
-                if (metric){
-                    setTemp(
-                            String.format("%.2f", main.getDouble("temp"))+ " °C");
-                }
-                else{
-                    setTemp(
-                            String.format("%.2f", main.getDouble("temp"))+ " °F");
-                }
-
-                DateFormat df = DateFormat.getDateTimeInstance();
-
-
-                setWeatherIcon(details.getInt("id"),
-                        json.getJSONObject("sys").getLong("sunrise") * 1000,
-                        json.getJSONObject("sys").getLong("sunset") * 1000);
-
-            }catch(Exception e){
-                Log.d("Weather Frag", "One or more fields not found in the JSON data");
-            }
         }
 
 

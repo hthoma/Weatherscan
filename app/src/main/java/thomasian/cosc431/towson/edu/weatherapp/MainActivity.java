@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-    ImageButton textButton, textButton2, textButton3,textButton4;
+    ImageButton textButton, textButton2, textButton3,textButton4, textButton7;
 
     RecyclerView recyclerView;
     public WeatherAdapter adapter;
@@ -90,6 +90,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         new Intent("android.intent.action.VIEW",
                                 Uri.parse("https://m.openweathermap.org/find?q=" + wf.getCity()));
                 startActivity(webIntent);
+
+            }
+        });
+
+        textButton7 = (ImageButton) findViewById(R.id.imageButton7);
+        textButton7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Add city");
+                final EditText input = new EditText(MainActivity.this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(input);
+                Log.d("MainActivity","FUCK");
+                builder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        weathers.add(new Weather(input.getText().toString()));
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+                builder.show();
 
             }
         });

@@ -174,4 +174,5 @@ public class WeatherFragment extends Fragment {
     public void changeUnit(){
         metric = !metric;
     }
+
 }
