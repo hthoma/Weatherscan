@@ -6,25 +6,29 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import java.util.ArrayList;
+
+import thomasian.cosc431.towson.edu.weatherapp.adapters.WeatherAdapter;
 import thomasian.cosc431.towson.edu.weatherapp.fragments.WeatherFragment;
+import thomasian.cosc431.towson.edu.weatherapp.models.Weather;
 import thomasian.cosc431.towson.edu.weatherapp.prefrences.CityPref;
 
 public class MainActivity extends AppCompatActivity {
 
     ImageButton textButton, textButton2, textButton3,textButton4;
-
-
-
-
-
+    IPresenter presenter;
+    RecyclerView recyclerView;
+    public WeatherAdapter adapter;
+    ArrayList<Weather> weathers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,9 +39,24 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.container, new WeatherFragment())
                     .commit();
         }
+
+
+        recyclerView = (RecyclerView)findViewById(R.id.weatherlist);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new WeatherAdapter(weathers,presenter));
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.weatherlist, new WeatherFragment())
+                .commit();
+
+
+
         bindView();
     }
+    private void addLocs(){
 
+
+    }
     private void bindView() {
         textButton = (ImageButton) findViewById(R.id.imageButton);
 
@@ -55,18 +74,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        textButton2 = (ImageButton) findViewById(R.id.imageButton2);
-
-        textButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                WeatherFragment wf2 = (WeatherFragment)getSupportFragmentManager()
-                        .findFragmentById(R.id.container);
-                wf2.refreshData();
-                Log.d("Main Activity", "Refreshed Data");
-
-            }
-        });
 
         textButton3 = (ImageButton) findViewById(R.id.imageButton3);
 
