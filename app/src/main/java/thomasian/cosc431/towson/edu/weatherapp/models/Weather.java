@@ -1,10 +1,7 @@
 package thomasian.cosc431.towson.edu.weatherapp.models;
 
-import org.json.JSONObject;
+import java.util.UUID;
 
-import java.util.Date;
-
-import thomasian.cosc431.towson.edu.weatherapp.R;
 import thomasian.cosc431.towson.edu.weatherapp.fragments.WeatherFragment;
 
 /**
@@ -13,35 +10,26 @@ import thomasian.cosc431.towson.edu.weatherapp.fragments.WeatherFragment;
 
 public class Weather {
     String cityname = "Baltimore";
-    String weathericon = "&#xf014;";
-    String temp = "60";
-    boolean metric = false;
     WeatherFragment wf = new WeatherFragment();
+    String ID;
 
     public Weather(String cityname) {
         this.cityname = cityname;
+        ID = UUID.randomUUID().toString();
     }
 
-    public Weather(String cityname, String weathericon, String temp) {
-        this.cityname = cityname;
-        this.weathericon = weathericon;
-        this.temp = temp;
-    }
 
     public Weather() {
     }
 
-    public boolean isMetric() {
-        return metric;
+    public String getID() {
+        return ID;
     }
 
-    public void setMetric(boolean metric) {
-        this.metric = metric;
+    public void setID(String ID) {
+        this.ID = ID;
     }
 
-    public void updateweatherinfo(JSONObject json){
-
-        }
 
 
 
@@ -53,50 +41,7 @@ public class Weather {
         this.cityname = cityname;
     }
 
-    public String getWeathericon() {
-        return weathericon;
-    }
 
-    public void setWeathericon(String weathericon) {
-        this.weathericon = weathericon;
-    }
-
-    public String getTemp() {
-        return temp;
-    }
-
-    public void setTemp(String temp) {
-        this.temp = temp;
-    }
-
-    private void setWeatherIcon(int actualId, long sunrise, long sunset){
-        int id = actualId / 100;
-        String icon = "";
-        if(actualId == 800){
-            long currentTime = new Date().getTime();
-            if(currentTime>=sunrise && currentTime<sunset) {
-                icon = wf.getString(R.string.weather_sunny);
-            } else {
-                icon = wf.getString(R.string.weather_clear_night);
-            }
-        } else {
-            switch(id) {
-                case 2 : icon = wf.getString(R.string.weather_thunder);
-                    break;
-                case 3 : icon = wf.getString(R.string.weather_drizzle);
-                    break;
-                case 7 : icon = wf.getString(R.string.weather_foggy);
-                    break;
-                case 8 : icon = wf.getString(R.string.weather_cloudy);
-                    break;
-                case 6 : icon = wf.getString(R.string.weather_snowy);
-                    break;
-                case 5 : icon = wf.getString(R.string.weather_rainy);
-                    break;
-            }
-        }
-       setWeathericon(icon);
-    }
 }
 
 

@@ -39,8 +39,6 @@ public class WeatherView {
     // sets all the widgets of the song view based on the Song's values
     public void renderWeather(Weather weather) {
         locationTv.setText(weather.getCityname());
-        weathericonTv.setText(weather.getWeathericon());
-        weathertempTv.setText(weather.getTemp());
         currentWeather = weather;
     }
 }

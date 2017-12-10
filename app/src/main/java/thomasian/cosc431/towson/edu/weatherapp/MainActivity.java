@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 import java.util.ArrayList;
 
 import thomasian.cosc431.towson.edu.weatherapp.adapters.WeatherAdapter;
+import thomasian.cosc431.towson.edu.weatherapp.database.WeatherDataSource;
 import thomasian.cosc431.towson.edu.weatherapp.fragments.WeatherFragment;
 import thomasian.cosc431.towson.edu.weatherapp.models.Weather;
 import thomasian.cosc431.towson.edu.weatherapp.prefrences.CityPref;
@@ -30,25 +31,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     ImageButton textButton, textButton2, textButton3,textButton4, textButton7;
-
+    WeatherDataSource weatherdata;
     RecyclerView recyclerView;
     public WeatherAdapter adapter;
+
     ArrayList<Weather> weathers= new ArrayList<Weather>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        weatherdata = new WeatherDataSource(getBaseContext());
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new WeatherFragment())
                     .commit();
         }
-        for(int i=0;i < 10;i++)
-        weathers.add(new Weather("Baltimore"));
+
+        weathers = weatherdata.getAllWeather();
         recyclerView = (RecyclerView)findViewById(R.id.weatherlist);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new WeatherAdapter(weathers, (IController)this);
+        adapter = new WeatherAdapter(weathers, (IController)this,getApplicationContext());
         recyclerView.setAdapter(adapter);
 
 
@@ -108,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         weathers.add(new Weather(input.getText().toString()));
+                        weatherdata.addWeather(new Weather(input.getText().toString()));
                         adapter.notifyDataSetChanged();
                     }
                 });

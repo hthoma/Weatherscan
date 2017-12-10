@@ -1,6 +1,6 @@
 package thomasian.cosc431.towson.edu.weatherapp.adapters;
 
-import android.os.Handler;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,10 +18,11 @@ import thomasian.cosc431.towson.edu.weatherapp.models.Weather;
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherViewHolder> {
     List<Weather> weathers;
     IController controller;
-
-    public WeatherAdapter(List<Weather> weathers, IController controller) {
+    Context context;
+    public WeatherAdapter(List<Weather> weathers, IController controller, Context context) {
         this.weathers = weathers;
         this.controller = controller;
+        this.context = context;
     }
 
 
@@ -38,9 +39,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherViewHolder> {
     @Override
     public void onBindViewHolder(WeatherViewHolder holder, int position) {
         Weather weather = weathers.get(position);
-        holder.bindWeather(weather);
-        Handler handler = new Handler();
-
+        holder.bindWeather(weather, context);
     }
 
     @Override
