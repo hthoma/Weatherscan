@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .add(R.id.container, new WeatherFragment())
                     .commit();
         }
-
+        for(int i=0;i < 10;i++)
         weathers.add(new Weather("Baltimore"));
         recyclerView = (RecyclerView)findViewById(R.id.weatherlist);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

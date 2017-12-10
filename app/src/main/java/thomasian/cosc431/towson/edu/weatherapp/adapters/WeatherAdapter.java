@@ -1,5 +1,6 @@
 package thomasian.cosc431.towson.edu.weatherapp.adapters;
 
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +39,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherViewHolder> {
     public void onBindViewHolder(WeatherViewHolder holder, int position) {
         Weather weather = weathers.get(position);
         holder.bindWeather(weather);
-
+        Handler handler = new Handler();
 
     }
 

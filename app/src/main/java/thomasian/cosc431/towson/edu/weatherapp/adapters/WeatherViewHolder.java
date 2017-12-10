@@ -28,6 +28,7 @@ public class WeatherViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindWeather(Weather weather) {
+        
         locationTv.setText(weather.getCityname());
         weathericonTv.setText(weather.getWeathericon());
         weathertempTv.setText(weather.getTemp());
