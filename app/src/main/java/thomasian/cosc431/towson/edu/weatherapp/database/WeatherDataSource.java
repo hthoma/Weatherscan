@@ -55,17 +55,12 @@ public class WeatherDataSource {
         db.insert("'"+DatabaseContract.TABLE_NAME+ "'", null,cv);
     }
 
-    public void updateWeather(Weather weather) {
-        ContentValues cv = weatherToContentValues(weather);
+
+    public void deleteWeather(Weather weather) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.update(DatabaseContract.TABLE_NAME,cv,DatabaseContract.WEATHER_ID + "=" + weather.getID(),null);
-    }
-
-
-
-    public void deleteReminder(Weather weather) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        db.delete(DatabaseContract.TABLE_NAME, "'"+ DatabaseContract.WEATHER_ID + "' = '"  + weather.getID() + "'",null);
+        db.delete(DatabaseContract.TABLE_NAME, DatabaseContract.WEATHER_ID + " = ?",
+                new String[] { String.valueOf(weather.getID()) });
+        db.close();
         }
 
 

@@ -1,9 +1,16 @@
 package thomasian.cosc431.towson.edu.weatherapp;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,10 +20,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import thomasian.cosc431.towson.edu.weatherapp.adapters.WeatherAdapter;
 import thomasian.cosc431.towson.edu.weatherapp.database.WeatherDataSource;
@@ -29,13 +40,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = MainActivity.class.getSimpleName();
 
 
-
-    ImageButton textButton, textButton2, textButton3,textButton4, textButton7;
+    ImageButton textButton, textButton2, textButton3, textButton4, textButton7, mylocationbutton;
     WeatherDataSource weatherdata;
     RecyclerView recyclerView;
     public WeatherAdapter adapter;
+    WeatherFragment frag = new WeatherFragment();
 
-    ArrayList<Weather> weathers= new ArrayList<Weather>();
+    ArrayList<Weather> weathers = new ArrayList<Weather>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,33 +55,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         weatherdata = new WeatherDataSource(getBaseContext());
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new WeatherFragment())
+                    .add(R.id.container, frag)
                     .commit();
         }
 
         weathers = weatherdata.getAllWeather();
-        recyclerView = (RecyclerView)findViewById(R.id.weatherlist);
+        recyclerView = (RecyclerView) findViewById(R.id.weatherlist);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new WeatherAdapter(weathers, (IController)this,getApplicationContext());
+        adapter = new WeatherAdapter(weathers, this, getApplicationContext(), frag);
         recyclerView.setAdapter(adapter);
-
-
-
 
 
         bindView();
     }
-    private void addLocs(){
+
+    private void addLocs() {
 
 
     }
+
     private void bindView() {
         textButton = (ImageButton) findViewById(R.id.imageButton);
 
         textButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                WeatherFragment wf = (WeatherFragment)getSupportFragmentManager()
+                WeatherFragment wf = (WeatherFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.container);
 
                 Intent sendIntent = new Intent(Intent.ACTION_VIEW);
@@ -86,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textButton3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                WeatherFragment wf = (WeatherFragment)getSupportFragmentManager()
+                WeatherFragment wf = (WeatherFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.container);
                 Intent webIntent =
                         new Intent("android.intent.action.VIEW",
@@ -103,9 +114,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Add city");
                 final EditText input = new EditText(MainActivity.this);
+                final CheckBox cb = new CheckBox(MainActivity.this);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input);
-                Log.d("MainActivity","FUCK");
+                Log.d("MainActivity", "FUCK");
                 builder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -118,6 +130,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
+
+        mylocationbutton = (ImageButton) findViewById(R.id.myloc);
+        mylocationbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    Log.d("MainActivity","Permissions test failed");
+                }
+                else{
+                    LocationManager lm = (LocationManager) getSystemService(MainActivity.this.LOCATION_SERVICE);
+                    Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    Log.d("MainActivity",location.getLongitude() + " " + location.getLatitude() );
+                    double longitude = location.getLongitude();
+                    double latitude = location.getLatitude();
+                    Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+                    List<Address> addresses = null;
+                    try {
+                        addresses = geocoder.getFromLocation(longitude, latitude, 1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    String cityName = addresses.get(0).getAddressLine(0);
+                        weathers.add(new Weather(cityName));
+                        weatherdata.addWeather(new Weather(cityName));
+                        adapter.notifyDataSetChanged();
+                    }
+
+                }
+
+
+
+
+            });
 
 
         textButton4 = (ImageButton) findViewById(R.id.imageButton4);
@@ -208,3 +254,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 }
+

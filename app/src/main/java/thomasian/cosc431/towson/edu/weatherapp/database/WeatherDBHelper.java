@@ -9,8 +9,8 @@ public class WeatherDBHelper extends SQLiteOpenHelper {
 
 
 
-    private static final String DATABASE_NAME = "weatherdatabase.db";
-    private static final int DB_VERSION = 1;
+    private static final String DATABASE_NAME = "weatherdatabase2.db";
+    private static final int DB_VERSION = 4;
 
     private static final String CREATE_TABLE =
             "create table " + DatabaseContract.TABLE_NAME + " ( '" +

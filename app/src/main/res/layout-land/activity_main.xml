@@ -8,6 +8,16 @@
     tools:context="thomasian.cosc431.towson.edu.weatherapp.MainActivity">
 
     <ImageButton
+        android:id="@+id/myloc"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toRightOf="@+id/imageButton7"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_mylocation" />
+
+    <ImageButton
         android:id="@+id/imageButton4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
