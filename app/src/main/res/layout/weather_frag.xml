@@ -13,7 +13,8 @@
         android:layout_marginTop="8dp"
         android:textSize="18sp"
         app:layout_constraintLeft_toRightOf="@+id/updated_field"
-        app:layout_constraintTop_toBottomOf="@+id/Day3" />
+        app:layout_constraintTop_toBottomOf="@+id/Day3"
+        android:layout_marginStart="16dp" />
 
     <TextView
         android:id="@+id/Day3"
@@ -23,7 +24,8 @@
         android:layout_marginTop="8dp"
         android:textSize="18sp"
         app:layout_constraintLeft_toRightOf="@+id/updated_field"
-        app:layout_constraintTop_toBottomOf="@+id/Icon2" />
+        app:layout_constraintTop_toBottomOf="@+id/Icon2"
+        android:layout_marginStart="15dp" />
 
     <TextView
         android:id="@+id/Icon2"
@@ -33,7 +35,8 @@
         android:layout_marginTop="8dp"
         android:textSize="18sp"
         app:layout_constraintLeft_toRightOf="@+id/updated_field"
-        app:layout_constraintTop_toBottomOf="@+id/Day2" />
+        app:layout_constraintTop_toBottomOf="@+id/Day2"
+        android:layout_marginStart="16dp" />
 
     <TextView
         android:id="@+id/Day2"
@@ -43,7 +46,8 @@
         android:layout_marginTop="8dp"
         android:textSize="18sp"
         app:layout_constraintLeft_toRightOf="@+id/updated_field"
-        app:layout_constraintTop_toBottomOf="@+id/Icon1" />
+        app:layout_constraintTop_toBottomOf="@+id/Icon1"
+        android:layout_marginStart="15dp" />
 
     <TextView
         android:id="@+id/city_field"
@@ -51,12 +55,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="0dp"
         android:layout_marginTop="8dp"
         android:textAlignment="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        app:layout_constraintLeft_toLeftOf="@+id/updated_field"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <TextView
         android:id="@+id/updated_field"
@@ -68,8 +72,7 @@
         android:textSize="13sp"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/city_field"
-        app:layout_constraintRight_toRightOf="@+id/city_field"
-        android:layout_marginLeft="8dp"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />
 
     <TextView
@@ -82,8 +85,8 @@
         android:textSize="80sp"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/current_temperature_field"
-        app:layout_constraintRight_toRightOf="@+id/current_temperature_field"
-        app:layout_constraintLeft_toLeftOf="@+id/current_temperature_field" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/Day3" />
 
     <TextView
         android:id="@+id/current_temperature_field"
@@ -95,8 +98,9 @@
         android:textSize="40sp"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/updated_field"
-        app:layout_constraintRight_toRightOf="@+id/updated_field"
-        app:layout_constraintLeft_toLeftOf="@+id/updated_field" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/Day1"
+        app:layout_constraintHorizontal_bias="0.5" />
 
     <TextView
         android:id="@+id/details_field"
@@ -105,10 +109,10 @@
         android:layout_below="@+id/weather_icon"
         android:layout_centerHorizontal="true"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        app:layout_constraintLeft_toLeftOf="@+id/weather_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="6dp"
         app:layout_constraintTop_toBottomOf="@+id/weather_icon"
-        app:layout_constraintRight_toRightOf="@+id/weather_icon" />
+        app:layout_constraintRight_toLeftOf="@+id/Icon3" />
 
     <TextView
         android:id="@+id/Day1"
@@ -118,7 +122,8 @@
         android:layout_marginTop="8dp"
         android:textSize="18sp"
         app:layout_constraintLeft_toRightOf="@+id/updated_field"
-        app:layout_constraintTop_toBottomOf="@+id/updated_field" />
+        app:layout_constraintTop_toBottomOf="@+id/updated_field"
+        android:layout_marginStart="15dp" />
 
     <TextView
         android:id="@+id/Icon1"
@@ -128,7 +133,8 @@
         android:layout_marginTop="8dp"
         android:textSize="18sp"
         app:layout_constraintLeft_toRightOf="@+id/updated_field"
-        app:layout_constraintTop_toBottomOf="@+id/Day1" />
+        app:layout_constraintTop_toBottomOf="@+id/Day1"
+        android:layout_marginStart="16dp" />
 
 
 </android.support.constraint.ConstraintLayout>
