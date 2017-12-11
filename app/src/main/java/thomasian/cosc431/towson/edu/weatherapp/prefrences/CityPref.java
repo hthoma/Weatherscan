@@ -15,10 +15,13 @@ public class CityPref {
         prefs = activity.getPreferences(Activity.MODE_PRIVATE);
     }
 
-    public void setUnits(){
-        prefs.edit().putBoolean("metric",!(prefs.getBoolean("metric",false))).commit();
+
+    public void setUnits(Boolean metric){
+        prefs.edit().putBoolean("metric",metric).commit();
 
     }
+
+
 
     public Boolean getUnits(){
         return prefs.getBoolean("metric",false);

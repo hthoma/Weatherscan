@@ -3,6 +3,8 @@ package thomasian.cosc431.towson.edu.weatherapp;
 /**
  * Created by hthoma on 11/20/17.
  */
+
+import android.app.Activity;
 import android.content.Context;
 
 import org.json.JSONObject;
@@ -11,6 +13,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import thomasian.cosc431.towson.edu.weatherapp.prefrences.CityPref;
 
 public class FetchWeather {
 
@@ -51,10 +55,10 @@ public class FetchWeather {
         }
     }
 
-    public static JSONObject getJSON(Context context, String city, boolean metric){
+    public static JSONObject getJSON(Context context, String city, Activity theactivity){
         try {
             URL url;
-            if(metric)
+            if(new CityPref(theactivity).getUnits())
                 url = new URL(String.format("http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric", city));
             else
                 url = new URL(String.format("http://api.openweathermap.org/data/2.5/weather?q=%s&units=imperial", city));
@@ -82,6 +86,7 @@ public class FetchWeather {
 
             return data;
         }catch(Exception e){
+            e.printStackTrace();
             return null;
         }
     }

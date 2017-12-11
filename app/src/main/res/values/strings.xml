@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">Weatherscan Thomasian</string>
+    <string name="app_name">Weatherscan</string>
     <string name="change_city">Change city</string>
 
 
     <string name="open_weather_maps_app_id">4395b9c2cf80a89f7347816081680ecb</string>
-
+    <string name="OPEN_WEATHER_MAP_API_KEY">4395b9c2cf80a89f7347816081680ecb</string>
     <string name="weather_sunny">&#xf00d;</string>
     <string name="weather_clear_night">&#xf02e;</string>
 
