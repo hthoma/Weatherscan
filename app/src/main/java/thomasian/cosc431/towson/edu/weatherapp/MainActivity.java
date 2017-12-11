@@ -184,9 +184,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         else {
                             cityName = "Could not find City";
                         }
-                        weathers.add(new Weather(cityName));
-                        weatherdata.addWeather(new Weather(cityName));
+                        Weather addwther = new Weather(cityName);
+                        weathers.add(addwther);
+                        weatherdata.addWeather(addwther);
                         adapter.notifyDataSetChanged();
+                        adapter.notifyItemInserted(weathers.size());
                     }
                 }
 
