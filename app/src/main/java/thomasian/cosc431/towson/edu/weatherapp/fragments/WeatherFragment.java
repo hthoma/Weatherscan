@@ -16,6 +16,7 @@ import com.kwabenaberko.openweathermaplib.Units;
 import com.kwabenaberko.openweathermaplib.implementation.OpenWeatherMapHelper;
 import com.kwabenaberko.openweathermaplib.models.threehourforecast.ThreeHourForecast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
@@ -90,6 +91,7 @@ public class WeatherFragment extends Fragment {
         weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "weather.ttf");
         updateWeatherData(new CityPref(getActivity()).getCity());
 
+
     }
 
 
@@ -149,7 +151,8 @@ public class WeatherFragment extends Fragment {
     private void updateWeatherData(final String city) {
         new Thread() {
             public void run() {
-                final JSONObject json = FetchWeather.getJSON(context, city, metric);
+                final JSONObject json = FetchWeather.getJSON(getActivity(), city, metric);
+                Log.d("UpdateWeatherData",json.toString() +"");
                 if (json == null) {
                     handler.post(new Runnable() {
                         public void run() {
@@ -169,6 +172,9 @@ public class WeatherFragment extends Fragment {
         }.start();
     }
 
+
+
+
     public static int safeLongToInt(long l) {
         if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
             throw new IllegalArgumentException
@@ -184,8 +190,11 @@ public class WeatherFragment extends Fragment {
                     json.getJSONObject("sys").getString("country"));
 
             JSONObject details = json.getJSONArray("weather").getJSONObject(0);
+            Log.d("renderWeather","Got weather");
             JSONObject main = json.getJSONObject("main");
+            Log.d("renderWeather","Got main");
             JSONObject wind = json.getJSONObject("wind");
+            Log.d("renderWeather","Got wind");
             if (metric){
                 detailsField.setText(
                         details.getString("description").toUpperCase(Locale.US) +
@@ -210,9 +219,11 @@ public class WeatherFragment extends Fragment {
             setWeatherIcon(details.getInt("id"),
                     json.getJSONObject("sys").getLong("sunrise") * 1000,
                     json.getJSONObject("sys").getLong("sunset") * 1000);
+            Log.d("renderWeather","Got weathericon");
             set3Day(json.getString("name").toUpperCase(Locale.US));
-        }catch(Exception e){
-            Log.d("Weather Frag", "One or more fields not found in the JSON data");
+            Log.d("renderWeather","Got 3day");
+        }catch(JSONException e){
+            e.printStackTrace();
         }
     }
 
@@ -286,6 +297,7 @@ public class WeatherFragment extends Fragment {
     public void changeCity(String city){
         updateWeatherData(city);
     }
+
 
     public void refreshData(){
         updateWeatherData(new CityPref(getActivity()).getCity());

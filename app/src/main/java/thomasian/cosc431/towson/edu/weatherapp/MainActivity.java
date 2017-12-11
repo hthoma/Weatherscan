@@ -133,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 final CheckBox cb = new CheckBox(MainActivity.this);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input);
-                Log.d("MainActivity", "FUCK");
                 builder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -282,36 +281,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for(Weather weather : weathers) {
             Log.d("TAG", weather.toString());
         }
-    }
-    public String getLocationName(double lattitude, double longitude) {
-
-        String cityName = "Not Found";
-        Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
-        try {
-
-            List<Address> addresses = gcd.getFromLocation(lattitude, longitude,
-                    10);
-
-            for (Address adrs : addresses) {
-                if (adrs != null) {
-
-                    String city = adrs.getLocality();
-                    if (city != null && !city.equals("")) {
-                        cityName = city;
-                        System.out.println("city ::  " + cityName);
-                    } else {
-
-                    }
-                    // // you should also try with addresses.get(0).toSring();
-
-                }
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return cityName;
-
     }
 
 

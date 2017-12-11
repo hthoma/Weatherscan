@@ -72,13 +72,9 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherViewHolder> {
         holder.layout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                theactivity = (MainActivity)theactivity;
                 Log.d("WeatherAdapter", weather.getCityname());
                 new CityPref(theactivity).setCity(weathers.get(elementloc).getCityname());
-                if (frag.isInLayout())
-                    Log.d("WeatherAdapter","Fragment is now null!");
-                else
-                    frag.changeCity(weather.getCityname());
+                ((MainActivity) theactivity).changeCity(weather.getCityname());
 
 
 
