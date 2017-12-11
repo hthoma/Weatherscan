@@ -1,6 +1,7 @@
 package thomasian.cosc431.towson.edu.weatherapp;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,6 +25,11 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,15 +41,19 @@ import thomasian.cosc431.towson.edu.weatherapp.fragments.WeatherFragment;
 import thomasian.cosc431.towson.edu.weatherapp.models.Weather;
 import thomasian.cosc431.towson.edu.weatherapp.prefrences.CityPref;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, IController {
-    private static final int ADD_SONG_REQUEST_CODE = 42;
-    private static final String TAG = MainActivity.class.getSimpleName();
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, IController, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
-
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 949;
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
     ImageButton textButton, textButton2, textButton3, textButton4, textButton7, mylocationbutton;
     WeatherDataSource weatherdata;
     RecyclerView recyclerView;
     public WeatherAdapter adapter;
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLocation;
+    private LocationManager locationManager;
+    private LocationRequest mLocationRequest;
     WeatherFragment frag = new WeatherFragment();
 
     ArrayList<Weather> weathers = new ArrayList<Weather>();
@@ -58,6 +68,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .add(R.id.container, frag)
                     .commit();
         }
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                MY_PERMISSIONS_REQUEST_LOCATION);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         weathers = weatherdata.getAllWeather();
         recyclerView = (RecyclerView) findViewById(R.id.weatherlist);
@@ -138,27 +158,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     Log.d("MainActivity","Permissions test failed");
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            MY_PERMISSIONS_REQUEST_LOCATION);
                 }
-                else{
-                    LocationManager lm = (LocationManager) getSystemService(MainActivity.this.LOCATION_SERVICE);
-                    Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    Log.d("MainActivity",location.getLongitude() + " " + location.getLatitude() );
-                    double longitude = location.getLongitude();
-                    double latitude = location.getLatitude();
-                    Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
-                    List<Address> addresses = null;
-                    try {
-                        addresses = geocoder.getFromLocation(longitude, latitude, 1);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    String cityName = addresses.get(0).getAddressLine(0);
+                else {
+                    mLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                    Log.d("MainActivity", mLocation.getLatitude() + " " +mLocation.getLongitude() );
+                    if (Double.isNaN(mLocation.getLatitude())  || Double.isNaN(mLocation.getLongitude()) ) {
+                        Log.d("MainActivity", "Cant find location");
+                    } else {
+
+                        String cityName;
+                        Geocoder gcd = new Geocoder(MainActivity.this, Locale.getDefault());
+                        List<Address> addresses = null;
+                        try {
+                            addresses = gcd.getFromLocation(mLocation.getLatitude(), mLocation.getLongitude(), 1);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (addresses.size() > 0) {
+                           cityName = addresses.get(0).getLocality();
+                        }
+                        else {
+                            cityName = "Could not find City";
+                        }
                         weathers.add(new Weather(cityName));
                         weatherdata.addWeather(new Weather(cityName));
                         adapter.notifyDataSetChanged();
                     }
-
                 }
+
+            }
+
+
 
 
 
@@ -253,5 +287,112 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("TAG", weather.toString());
         }
     }
+    public String getLocationName(double lattitude, double longitude) {
+
+        String cityName = "Not Found";
+        Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+        try {
+
+            List<Address> addresses = gcd.getFromLocation(lattitude, longitude,
+                    10);
+
+            for (Address adrs : addresses) {
+                if (adrs != null) {
+
+                    String city = adrs.getLocality();
+                    if (city != null && !city.equals("")) {
+                        cityName = city;
+                        System.out.println("city ::  " + cityName);
+                    } else {
+
+                    }
+                    // // you should also try with addresses.get(0).toSring();
+
+                }
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return cityName;
+
+    }
+
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        } startLocationUpdates();
+        mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if(mLocation == null){
+            startLocationUpdates();
+        }
+        if (mLocation != null) {
+            double latitude = mLocation.getLatitude();
+            double longitude = mLocation.getLongitude();
+        } else {
+            // Toast.makeText(this, "Location not Detected", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    protected void startLocationUpdates() {
+        // Create the location request
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(MIN_TIME_BW_UPDATES)
+                .setFastestInterval(MIN_TIME_BW_UPDATES);
+        // Request location updates
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                mLocationRequest, this);
+        Log.d("reque", "--->>>>");
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
 }
 
