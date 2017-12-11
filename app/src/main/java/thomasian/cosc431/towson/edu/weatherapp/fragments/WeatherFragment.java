@@ -47,7 +47,6 @@ public class WeatherFragment extends Fragment {
     TextView Icon1Tv;
     TextView Icon2Tv;
     TextView Icon3Tv;
-    Boolean metric = false;
     Handler handler;
     Context context;
     public WeatherFragment() {
@@ -89,6 +88,7 @@ public class WeatherFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "weather.ttf");
+
         updateWeatherData(new CityPref(getActivity()).getCity());
 
 
@@ -151,7 +151,7 @@ public class WeatherFragment extends Fragment {
     private void updateWeatherData(final String city) {
         new Thread() {
             public void run() {
-                final JSONObject json = FetchWeather.getJSON(getActivity(), city, metric);
+                final JSONObject json = FetchWeather.getJSON(getActivity(), city, getActivity());
                 Log.d("UpdateWeatherData",json.toString() +"");
                 if (json == null) {
                     handler.post(new Runnable() {
@@ -171,6 +171,9 @@ public class WeatherFragment extends Fragment {
             }
         }.start();
     }
+
+
+
 
 
 
@@ -195,7 +198,7 @@ public class WeatherFragment extends Fragment {
             Log.d("renderWeather","Got main");
             JSONObject wind = json.getJSONObject("wind");
             Log.d("renderWeather","Got wind");
-            if (metric){
+            if (new CityPref(getActivity()).getUnits()){
                 detailsField.setText(
                         details.getString("description").toUpperCase(Locale.US) +
                                 "\n" + "Humidity: " + main.getString("humidity") + "%" +
@@ -301,6 +304,7 @@ public class WeatherFragment extends Fragment {
 
     public void refreshData(){
         updateWeatherData(new CityPref(getActivity()).getCity());
+
     }
 
     public String TextFriend(){
@@ -314,7 +318,7 @@ public class WeatherFragment extends Fragment {
     }
 
     public void changeUnit(){
-        metric = !metric;
+        updateWeatherData(new CityPref(getActivity()).getCity());
     }
 
 

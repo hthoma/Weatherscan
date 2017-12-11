@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -29,12 +30,14 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherViewHolder> {
     WeatherDataSource weatherdata;
     WeatherFragment frag;
     Activity theactivity;
-    public WeatherAdapter(List<Weather> weathers, IController controller, Context context, WeatherFragment frag, Activity theactivity) {
+    Boolean ismetric;
+    public WeatherAdapter(List<Weather> weathers, IController controller, Context context, WeatherFragment frag, Activity theactivity,Boolean ismetric) {
         this.weathers = weathers;
         this.controller = controller;
         this.context = context;
         this.frag = frag;
         this.theactivity = theactivity;
+        this.ismetric = ismetric;
     }
 
 
@@ -54,7 +57,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherViewHolder> {
     public void onBindViewHolder(WeatherViewHolder holder, int position) {
         final Weather weather = weathers.get(position);
        final int elementloc = position;
-        holder.bindWeather(weather);
+        holder.bindWeather(weather, new CityPref(theactivity).getUnits());
         holder.layout.setOnLongClickListener(new View.OnLongClickListener(){
             @Override
             public boolean onLongClick(View view) {
@@ -64,7 +67,9 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherViewHolder> {
 
                 weathers.remove(elementloc);
                 notifyItemRemoved(elementloc);
+
                 notifyItemRangeChanged(elementloc, weathers.size());
+
                 return true;
 
             }
@@ -73,8 +78,12 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherViewHolder> {
             @Override
             public void onClick(View view) {
                 Log.d("WeatherAdapter", weather.getCityname());
-                new CityPref(theactivity).setCity(weathers.get(elementloc).getCityname());
-                ((MainActivity) theactivity).changeCity(weather.getCityname());
+                if (!weather.getTemp().equals("Cannot Find City")) {
+                    new CityPref(theactivity).setCity(weathers.get(elementloc).getCityname());
+                    ((MainActivity) theactivity).changeCity(weather.getCityname());
+                }
+                else
+                    Toast.makeText(view.getContext(),"That is not a valid city",Toast.LENGTH_SHORT).show();
 
 
 

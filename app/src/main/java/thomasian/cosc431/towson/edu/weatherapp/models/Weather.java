@@ -2,15 +2,13 @@ package thomasian.cosc431.towson.edu.weatherapp.models;
 
 import java.util.UUID;
 
-import thomasian.cosc431.towson.edu.weatherapp.fragments.WeatherFragment;
-
 /**
  * Created by hthoma on 12/9/17.
  */
 
 public class Weather {
     String cityname = "Baltimore";
-    WeatherFragment wf = new WeatherFragment();
+    String temp = "Can find";
     String ID;
 
     public Weather(String cityname) {
@@ -18,6 +16,13 @@ public class Weather {
         ID = UUID.randomUUID().toString();
     }
 
+    public void setTemp(String temp) {
+        this.temp = temp;
+    }
+
+    public String getTemp() {
+        return temp;
+    }
 
     public Weather() {
     }

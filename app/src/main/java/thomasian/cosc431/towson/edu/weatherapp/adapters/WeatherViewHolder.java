@@ -47,8 +47,11 @@ public class WeatherViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    public void bindWeather(final Weather weather) {
+    public void bindWeather(final Weather weather, final Boolean ismetric) {
         helper.setApiKey("4395b9c2cf80a89f7347816081680ecb");
+        if(ismetric)
+        helper.setUnits(Units.METRIC);
+        else
         helper.setUnits(Units.IMPERIAL);
         weatherFont = Typeface.createFromAsset(itemView.getContext().getAssets(), "weather.ttf");
         helper.getCurrentWeatherByCityName(weather.getCityname(), new OpenWeatherMapHelper.CurrentWeatherCallback() {
@@ -61,19 +64,34 @@ public class WeatherViewHolder extends RecyclerView.ViewHolder {
                                 + "Wind Speed: " + currentWeather.getWind().getSpeed() + "\n"
                                 + "City, Country: " + currentWeather.getName() + ", " + currentWeather.getSys().getCountry()
                 );
-                weathertempTv.setText(Double.toString(currentWeather.getMain().getTemp()) + " °F");
-                weathericonTv.setTypeface(weatherFont);
-                weathericonTv.setText(getWeatherIcon(safeLongToInt(currentWeather.getWeatherArray().get(0).getId())));
-                Log.d("HELLOHARRY", itemView.getContext().getString(R.string.weather_thunder));
+                if(ismetric) {
+                    weathertempTv.setText(Double.toString(currentWeather.getMain().getTemp()) + " °C");
+                    weather.setTemp(Double.toString(currentWeather.getMain().getTemp()) + " °C");
+                    weathericonTv.setTypeface(weatherFont);
+                    weathericonTv.setText(getWeatherIcon(safeLongToInt(currentWeather.getWeatherArray().get(0).getId())));
+                }
+               else{
+                    weathertempTv.setText(Double.toString(currentWeather.getMain().getTemp()) + " °F");
+                    weather.setTemp(Double.toString(currentWeather.getMain().getTemp()) + " °F");
+                    weathericonTv.setTypeface(weatherFont);
+                    weathericonTv.setText(getWeatherIcon(safeLongToInt(currentWeather.getWeatherArray().get(0).getId())));
+
+
+                }
             }
 
             @Override
             public void onFailure(Throwable throwable) {
+                weather.setTemp("Cannot Find City");
                 Log.v(TAG, throwable.getMessage());
+                weathertempTv.setText("Not Valid");
+                weathericonTv.setText("");
             }
         });
 
         locationTv.setText(weather.getCityname());
+
+
         this.weather = weather;
 
 

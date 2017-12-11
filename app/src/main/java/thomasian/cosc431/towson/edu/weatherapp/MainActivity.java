@@ -21,7 +21,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -51,8 +50,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public WeatherAdapter adapter;
     private GoogleApiClient mGoogleApiClient;
     private Location mLocation;
+    Boolean ismetric;
     private LocationManager locationManager;
     private LocationRequest mLocationRequest;
+
     WeatherFragment frag = new WeatherFragment();
 
     ArrayList<Weather> weathers = new ArrayList<Weather>();
@@ -67,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .add(R.id.container, frag)
                     .commit();
         }
+        ismetric = new CityPref(this).getUnits();
+        Log.d("ChangeUnit", ismetric + " ISMETRIC");
         ActivityCompat.requestPermissions(MainActivity.this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 MY_PERMISSIONS_REQUEST_LOCATION);
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         weathers = weatherdata.getAllWeather();
         recyclerView = (RecyclerView) findViewById(R.id.weatherlist);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new WeatherAdapter(weathers, this, getApplicationContext(), frag,this);
+        adapter = new WeatherAdapter(weathers, this, getApplicationContext(), frag,this, (new CityPref(this).getUnits()));
         recyclerView.setAdapter(adapter);
 
 
@@ -108,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
 
+
         textButton3 = (ImageButton) findViewById(R.id.imageButton3);
 
         textButton3.setOnClickListener(new View.OnClickListener() {
@@ -130,15 +134,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Add city");
                 final EditText input = new EditText(MainActivity.this);
-                final CheckBox cb = new CheckBox(MainActivity.this);
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input);
                 builder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        weathers.add(new Weather(input.getText().toString()));
-                        weatherdata.addWeather(new Weather(input.getText().toString()));
+                        Weather addwther = new Weather(input.getText().toString());
+                        weathers.add(addwther);
+                        weatherdata.addWeather(addwther);
                         adapter.notifyDataSetChanged();
+                        adapter.notifyItemInserted(weathers.size());
                     }
                 });
                 builder.show();
@@ -196,14 +201,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         textButton4 = (ImageButton) findViewById(R.id.imageButton4);
-
+        textButton4.setClickable(true);
         textButton4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                textButton4.setClickable(false);
                 WeatherFragment wf = (WeatherFragment)getSupportFragmentManager()
                         .findFragmentById(R.id.container);
               wf.changeUnit();
                 wf.refreshData();
+                changeUnit();
+                adapter.notifyDataSetChanged();
+                textButton4.setClickable(true);
+
 
             }
         });
@@ -227,32 +237,64 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void showInputDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Change city");
+        builder.setTitle("Input ZipCode (USA)");
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
         builder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                changeCity(input.getText().toString());
+                String cityName;
+                Geocoder gcd = new Geocoder(MainActivity.this, Locale.getDefault());
+                List<Address> addresses = null;
+                try {
+                    addresses = gcd.getFromLocationName(input.getText().toString(),1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (addresses.size() > 0) {
+                    cityName = addresses.get(0).getLocality();
+                }
+                else {
+                    cityName = "Could not find City";
+                }
+                Log.d("MainActivity", " " + cityName);
+                Weather addwther = new Weather(cityName);
+                weathers.add(addwther);
+                weatherdata.addWeather(addwther);
+                adapter.notifyDataSetChanged();
+                adapter.notifyItemInserted(weathers.size());
             }
         });
         builder.show();
+    }
+
+    public void changeUnit(){
+        WeatherFragment wf = (WeatherFragment)getSupportFragmentManager()
+                .findFragmentById(R.id.container);
+        wf.changeUnit();
+        new CityPref(this).setUnits(!(new CityPref(this).getUnits()));
+        ismetric = new CityPref(this).getUnits();
+
+        Log.d("ChangeUnit", ismetric + " ISMETRIC");
+
     }
 
     public void changeCity(String city){
         WeatherFragment wf = (WeatherFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.container);
         wf.changeCity(city);
+
         new CityPref(this).setCity(city);
     }
 
-    public void changeUnit(){
+    public void changeUnit(Boolean metric){
         WeatherFragment wf = (WeatherFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.container);
 
         wf.changeUnit();
-        new CityPref(this).setUnits();
+        wf.refreshData();
+        new CityPref(this).setUnits(metric);
     }
 
 
