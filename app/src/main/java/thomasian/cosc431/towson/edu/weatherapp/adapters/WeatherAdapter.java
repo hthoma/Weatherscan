@@ -1,7 +1,9 @@
 package thomasian.cosc431.towson.edu.weatherapp.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +11,13 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import thomasian.cosc431.towson.edu.weatherapp.IController;
+import thomasian.cosc431.towson.edu.weatherapp.MainActivity;
 import thomasian.cosc431.towson.edu.weatherapp.R;
 import thomasian.cosc431.towson.edu.weatherapp.database.WeatherDataSource;
 import thomasian.cosc431.towson.edu.weatherapp.fragments.WeatherFragment;
 import thomasian.cosc431.towson.edu.weatherapp.models.Weather;
+import thomasian.cosc431.towson.edu.weatherapp.prefrences.CityPref;
+
 /**
  * Created by hthoma on 12/9/17.
  */
@@ -23,11 +28,13 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherViewHolder> {
     Context context;
     WeatherDataSource weatherdata;
     WeatherFragment frag;
-    public WeatherAdapter(List<Weather> weathers, IController controller, Context context,WeatherFragment frag) {
+    Activity theactivity;
+    public WeatherAdapter(List<Weather> weathers, IController controller, Context context, WeatherFragment frag, Activity theactivity) {
         this.weathers = weathers;
         this.controller = controller;
         this.context = context;
         this.frag = frag;
+        this.theactivity = theactivity;
     }
 
 
@@ -44,8 +51,9 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherViewHolder> {
 
 
     @Override
-    public void onBindViewHolder(WeatherViewHolder holder, final int position) {
+    public void onBindViewHolder(WeatherViewHolder holder, int position) {
         final Weather weather = weathers.get(position);
+       final int elementloc = position;
         holder.bindWeather(weather);
         holder.layout.setOnLongClickListener(new View.OnLongClickListener(){
             @Override
@@ -54,9 +62,9 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherViewHolder> {
                 weatherdata = new WeatherDataSource(context);
                 weatherdata.deleteWeather(weather);
 
-                weathers.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, weathers.size());
+                weathers.remove(elementloc);
+                notifyItemRemoved(elementloc);
+                notifyItemRangeChanged(elementloc, weathers.size());
                 return true;
 
             }
@@ -64,9 +72,16 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherViewHolder> {
         holder.layout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+                theactivity = (MainActivity)theactivity;
+                Log.d("WeatherAdapter", weather.getCityname());
+                new CityPref(theactivity).setCity(weathers.get(elementloc).getCityname());
+                if (frag.isInLayout())
+                    Log.d("WeatherAdapter","Fragment is now null!");
+                else
+                    frag.changeCity(weather.getCityname());
 
-                frag.changeCity(weather.getCityname());
-                frag.refreshData();
+
+
             }
         });
 
@@ -81,10 +96,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherViewHolder> {
             return 0;
     }
 
-    public void delete(int position) {
-        weathers.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, weathers.size());
-    }
+
 
 }

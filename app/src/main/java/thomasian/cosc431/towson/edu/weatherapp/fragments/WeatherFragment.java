@@ -1,5 +1,6 @@
 package thomasian.cosc431.towson.edu.weatherapp.fragments;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,9 +48,15 @@ public class WeatherFragment extends Fragment {
     TextView Icon3Tv;
     Boolean metric = false;
     Handler handler;
-
+    Context context;
     public WeatherFragment() {
         handler = new Handler();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
 
@@ -82,7 +89,14 @@ public class WeatherFragment extends Fragment {
         super.onCreate(savedInstanceState);
         weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "weather.ttf");
         updateWeatherData(new CityPref(getActivity()).getCity());
+
     }
+
+
+
+
+
+
     private void set3Day(final String city){
 
         OpenWeatherMapHelper helper = new OpenWeatherMapHelper();
@@ -113,9 +127,9 @@ public class WeatherFragment extends Fragment {
                         "City/Country: "+ threeHourForecast.getCity().getName() + "/" + threeHourForecast.getCity().getCountry() +"\n"
                                 +"Forecast Array Count: " + threeHourForecast.getCnt() +"\n"
                                 //For this example, we are logging details of only the first forecast object in the forecasts array
-                                +"First Forecast Weather Description: (" + new SimpleDateFormat("EE", Locale.ENGLISH).format(date.getTime()) + ") "  + threeHourForecast.getThreeHourWeatherArray().get(1).getWeatherArray().get(0).getDescription() +"\n"
+                                +"First Forecast Weather Description: (" + new SimpleDateFormat("EE", Locale.ENGLISH).format(date.getTime()) + ") "  + threeHourForecast.getThreeHourWeatherArray().get(1).getWeatherArray().get(0).getId() +"\n"
                                 +"Second Forecast Weather Description: " + threeHourForecast.getThreeHourWeatherArray().get(2).getWeatherArray().get(0).getId() +"\n"
-                                +"Third Forecast Weather Description: " + threeHourForecast.getThreeHourWeatherArray().get(3).getWeatherArray().get(0).getDescription() +"\n"
+                                +"Third Forecast Weather Description: " + threeHourForecast.getThreeHourWeatherArray().get(3).getWeatherArray().get(0).getId() +"\n"
                 );
 
 
@@ -135,12 +149,12 @@ public class WeatherFragment extends Fragment {
     private void updateWeatherData(final String city) {
         new Thread() {
             public void run() {
-                final JSONObject json = FetchWeather.getJSON(getActivity(), city, metric);
+                final JSONObject json = FetchWeather.getJSON(context, city, metric);
                 if (json == null) {
                     handler.post(new Runnable() {
                         public void run() {
-                            Toast.makeText(getActivity(),
-                                    getActivity().getString(R.string.place_not_found),
+                            Toast.makeText(context,
+                                    context.getString(R.string.place_not_found),
                                     Toast.LENGTH_LONG).show();
                         }
                     });
@@ -290,5 +304,6 @@ public class WeatherFragment extends Fragment {
     public void changeUnit(){
         metric = !metric;
     }
+
 
 }

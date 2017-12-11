@@ -44,9 +44,8 @@ import thomasian.cosc431.towson.edu.weatherapp.prefrences.CityPref;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, IController, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 949;
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1;
-    ImageButton textButton, textButton2, textButton3, textButton4, textButton7, mylocationbutton;
+    ImageButton textButton, textButton3, textButton4, textButton7, mylocationbutton;
     WeatherDataSource weatherdata;
     RecyclerView recyclerView;
     public WeatherAdapter adapter;
@@ -78,21 +77,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .addApi(LocationServices.API)
                 .build();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
+        bindView();
         weathers = weatherdata.getAllWeather();
         recyclerView = (RecyclerView) findViewById(R.id.weatherlist);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new WeatherAdapter(weathers, this, getApplicationContext(), frag);
+        adapter = new WeatherAdapter(weathers, this, getApplicationContext(), frag,this);
         recyclerView.setAdapter(adapter);
 
 
-        bindView();
-    }
-
-    private void addLocs() {
-
 
     }
+
+
 
     private void bindView() {
         textButton = (ImageButton) findViewById(R.id.imageButton);
