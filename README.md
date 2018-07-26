@@ -2,8 +2,7 @@
 
 Weatherscan was created to better familiarize myself with android and its quirks. It is a fully functional weather app which utilizes the OpenWeatherAPI to deliver weather information to your phone!
 
-[WeatherScan Ad](https://raw.githubusercontent.com/hthoma/Weatherscan/WeatherScanAd.png)
-[[https://github.com/hthoma/WeatherScan/blob/master/WeatherScanAd.png]]
+![Weather Scan Ad](https://github.com/hthoma/WeatherScan/blob/master/WeatherScanAd.png)
 
 WeatherScan uses the following open source projects to work properly:
 
